@@ -12,7 +12,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {}))
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames =
+        {"firstName", "lastName", "email"}))
 @EntityListeners(AuditingEntityListener.class)
 
 @Getter
