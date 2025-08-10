@@ -40,9 +40,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("net.datafaker:datafaker:2.0.2")
 	implementation("org.instancio:instancio-junit:3.3.1")
-
 	runtimeOnly("com.h2database:h2")
-
+	runtimeOnly("org.postgresql:postgresql:42.7.3")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -54,6 +53,8 @@ dependencies {
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
+
 
 tasks.withType<Test> {
 	useJUnitPlatform()

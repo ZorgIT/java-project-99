@@ -3,6 +3,7 @@ spring:
     url: ${JDBC_DATABASE_URL}
     username: ${USERNAME}
     password: ${PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: ${HIBERNATE_DDL_AUTO:update}
