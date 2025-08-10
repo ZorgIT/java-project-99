@@ -9,4 +9,9 @@ spring:
     ansi:
       enabled: always
   profiles:
-    default: development
+    default: deploy
+  datasource:
+    hikari:
+      max-lifetime: 60000
+      keepalive-time: 30000
+      connection-timeout: 5000
