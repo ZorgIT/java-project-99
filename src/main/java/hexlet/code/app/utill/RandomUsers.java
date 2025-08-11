@@ -22,8 +22,6 @@ public class RandomUsers {
             user.setPassword(faker.internet().password(8, 16));
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
-            user.setModifiedBy(faker.name().username() + "test");
-            user.setCreatedBy(faker.name().username() + "test");
             users.add(user);
 
         }
