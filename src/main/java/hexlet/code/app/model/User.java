@@ -1,10 +1,11 @@
 package hexlet.code.app.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,28 +23,37 @@ public class User implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
+    @Size(max = 50)
+    @Column(nullable = true)
     private String firstName;
 
-    @Column(nullable = false)
+    @Size(max = 50)
+    @Column(nullable = true)
     private String lastName;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Email
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank
+    @Size(min = 3)
     @Column(nullable = false)
     private String password;
 
-    @CreatedDate
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    /*
     @CreatedBy
     private String createdBy;
 
     @LastModifiedBy
     private String modifiedBy;
+    */
 
 }
