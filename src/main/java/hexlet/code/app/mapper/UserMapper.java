@@ -2,6 +2,7 @@ package hexlet.code.app.mapper;
 
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
+import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.model.User;
 import org.mapstruct.*;
 
@@ -20,6 +21,7 @@ public abstract class UserMapper {
 
     public abstract User map(UserDTO dto);
 
-    public abstract void update(UserCreateDTO dto, @MappingTarget User model);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract void update(UserUpdateDTO dto, @MappingTarget User model);
 
 }
