@@ -16,11 +16,9 @@ public class UserUpdateDTO {
     @Size(max = 50, message = "Last name cannot be longer than 50 characters")
     private String lastName;
 
-    @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email should be valid")
     private String email;
 
-    @NotBlank(message = "Password cannot be empty")
     @Size(min = 3, message = "Password must be at least 3 characters")
     private String password;
 }

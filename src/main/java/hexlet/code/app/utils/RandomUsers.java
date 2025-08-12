@@ -1,9 +1,7 @@
-package hexlet.code.app.utill;
+package hexlet.code.app.utils;
 
 import hexlet.code.app.model.User;
-import hexlet.code.app.repository.UserRepository;
 import net.datafaker.Faker;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

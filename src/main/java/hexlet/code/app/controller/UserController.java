@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -51,13 +55,14 @@ public class UserController {
         }
 
         User user = userMapper.map(userCreateDTO);
+        user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
         User savedUser = userRepository.save(user);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userMapper.map(savedUser));
     }
 
-    @PutMapping("/{id}")
+    @RequestMapping(value = "/{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
             @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
@@ -66,13 +71,19 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found with id: " + id));
 
-        if (!existingUser.getEmail().equals(userUpdateDTO.getEmail()) &&
+        if (userUpdateDTO.getEmail() != null &&
+                !existingUser.getEmail().equals(userUpdateDTO.getEmail()) &&
                 userRepository.existsByEmail(userUpdateDTO.getEmail())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Email already exists: " + userUpdateDTO.getEmail());
         }
 
         userMapper.update(userUpdateDTO, existingUser);
+
+        if (userUpdateDTO.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
+        }
+
         User updatedUser = userRepository.save(existingUser);
         return ResponseEntity.ok(userMapper.map(updatedUser));
     }

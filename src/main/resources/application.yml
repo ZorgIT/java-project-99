@@ -12,6 +12,51 @@ spring:
     default: deploy
   datasource:
     hikari:
-      max-lifetime: 60000
-      keepalive-time: 30000
-      connection-timeout: 5000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 30000
+      max-lifetime: 600000
+      connection-timeout: 30000
+      leak-detection-threshold: 10000
+
+#TODO вычистить ключи, заменить переменными окружения
+rsa:
+  public-key: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuEZ93y7gOCRy849fXj4K
+    6fIoOKwIEl1PI/jnYzICWOmIAxeXN/rJ4e6a9rUgYCNgbeWArzxPs+cEjNvnS2ZU
+    WMnE8Nlqd9EQuRu2ygee2e09uvUzVekwgaTfnWY8d4wd4utvVw3F5I1TL/LhyHS9
+    RURMk9AYcVoVM9Fhbip7qWdxZhkH8qfw1tR0UC3yaD8WZW60oswgprG2db7N3cgI
+    3sXBB4i7tyVu7q/B/CHyLgwnur5Mghdn5V+kVopnO0SA1otUUBTenRoaaHGUkluR
+    MrA4dSzSQYiqp2/8n7GkoGKWO2Jm9FkubXty5gkEq7SSeXlUSA3RaSjrMaz+9cro
+    fwIDAQAB
+    -----END PUBLIC KEY-----
+  private-key: |
+    -----BEGIN PRIVATE KEY-----
+    MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC4Rn3fLuA4JHLz
+    j19ePgrp8ig4rAgSXU8j+OdjMgJY6YgDF5c3+snh7pr2tSBgI2Bt5YCvPE+z5wSM
+    2+dLZlRYycTw2Wp30RC5G7bKB57Z7T269TNV6TCBpN+dZjx3jB3i629XDcXkjVMv
+    8uHIdL1FREyT0BhxWhUz0WFuKnupZ3FmGQfyp/DW1HRQLfJoPxZlbrSizCCmsbZ1
+    vs3dyAjexcEHiLu3JW7ur8H8IfIuDCe6vkyCF2flX6RWimc7RIDWi1RQFN6dGhpo
+    cZSSW5EysDh1LNJBiKqnb/yfsaSgYpY7Ymb0WS5te3LmCQSrtJJ5eVRIDdFpKOsx
+    rP71yuh/AgMBAAECggEAB2bKxCh1gxZxCOK3rukJC9qDzmWX3BJOt8rV6GsSzbrG
+    PBw6IQUmugzDwVMHHjVtjcchGGjGFBtxra1g00DPSdMDi7T/4hjN9ibB0cg6k4BE
+    Rs/LJGaTDIdbH/ms8L76WFSiio7tZZUI7q0ab9sYhcFiM1xcDvl8+TGDcKcDg+Cn
+    /wHZ7Vp5Ke5B2X3gv/IwpPIy9zk0OCKyK/UkeLVnNfkn+rtDADNCr88e6lG8zCIa
+    WnMSSRjlonJHBT31aM6CrJWJRh6wxxN79Nt/6oAsKRyS5/WeLa2SBY6iyTtRTctc
+    6YPL41VQBTj+sczgqY4I718b47qOQady4AuFEV06CQKBgQDdC6VUldELA4f97jJf
+    E3RHAjktgUoRY0a437Jh2ODkbyP43lTk806P8TOtyI60858rHD/PgfpfkGSWonvr
+    NMaHChQzxe0Enp1pYQSakt3oJ2UTxz+EPmFrg9MVZsSDbmu48Ork4klgmAsUf2px
+    BiM99T9iMPTVrmYjvr1EK5YovQKBgQDValGi6DpFg7zoQclOGtX4FyxUdDAx8wf1
+    QZIaFR+voc+PT9IPzpvh5qYu98Q14c5rJBwP/zAeuzvPee8rt8pegqFpxYPtRc/v
+    qJfKHhWRlCcw0QQ13XGkK/Hu2nO0+Z92msK1qpkv2CDKysQSMc1iYlBBfwRNbu7Q
+    tGneCfE/6wKBgQCRE2SmWFHD/cRSh/QtbHJDbJUkZZe8Q8EV81N7XsFzi/I7E4j6
+    Xynv1SnK5DetUbvkqnzC75bpA7bRGsFkBNZLqPTLahr+ji/YCuHfpYbZKInxajMo
+    01xTGUj/4dwWOvGehxhTsqTgLcoP4PR2S8XzkzPPeTwnxneo/DXyOP0rrQKBgFwy
+    CgJugH33Y2ySvvxW64i5uhTh/NAXRaDWKt/JsF6XcKtguEbL4tu8YJ55uvHsEtiG
+    SPlALPGZwUToUEJ6q5oYpNKk2VFvj1zhYHGYfYjej++u3DrI54cc1O9yv/m2vQTn
+    5qXEhVj97WyuG/YgPbH69uDUlm89NT5EMlgRw37xAoGBAJ42MRP73ZQLn1+nLXGr
+    y6dtY9N6zENXLfX6OIe6J2j1IHk3f1gJ+4Abt6MPrI+BYu1OfLEjRfoh7Fylh/Wx
+    0pX0wgsrstMnxt5uhVhpYTUION6vtB1a2/VhC1QaeJ9MewKubCt/97Nz3Px91/0d
+    VAmN1YhU3xAjuXiuU5FauNU7
+    -----END PRIVATE KEY-----
