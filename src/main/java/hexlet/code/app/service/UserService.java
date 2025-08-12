@@ -7,20 +7,29 @@ import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserMapper userMapper;
+    public UserService(UserRepository userRepository,
+                       UserMapper userMapper,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
@@ -29,27 +38,47 @@ public class UserService {
     }
 
     public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
+        return userRepository.findAll()
+                .stream()
                 .map(userMapper::map)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public UserDTO createUser(UserCreateDTO userData) {
-        User user = userMapper.map(userData);
-        userRepository.save(user);
-        return userMapper.map(user);
+    public UserDTO createUser(UserCreateDTO userCreateDTO) {
+        if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
+            throw new ResourceNotFoundException("Email already exists: " + userCreateDTO.getEmail());
+        }
+
+        User user = userMapper.map(userCreateDTO);
+        user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
+        User savedUser = userRepository.save(user);
+        return userMapper.map(savedUser);
     }
 
-    public UserDTO updateUser(Long id, UserUpdateDTO userData) {
-        User user = userRepository.findById(id)
+    public UserDTO updateUser(Long id, UserUpdateDTO userUpdateDTO) {
+        User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-        userMapper.update(userData, user);
-        userRepository.save(user);
-        return userMapper.map(user);
+
+        if (userUpdateDTO.getEmail() != null &&
+                !existingUser.getEmail().equals(userUpdateDTO.getEmail()) &&
+                userRepository.existsByEmail(userUpdateDTO.getEmail())) {
+            throw new ResourceNotFoundException("Email already exists: " + userUpdateDTO.getEmail());
+        }
+
+        userMapper.update(userUpdateDTO, existingUser);
+
+        if (userUpdateDTO.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
+        }
+
+        User updatedUser = userRepository.save(existingUser);
+        return userMapper.map(updatedUser);
     }
 
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
         userRepository.deleteById(id);
     }
 }
