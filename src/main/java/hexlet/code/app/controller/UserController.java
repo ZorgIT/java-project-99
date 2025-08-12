@@ -3,7 +3,9 @@ package hexlet.code.app.controller;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
+import hexlet.code.app.model.User;
 import hexlet.code.app.service.UserService;
+import hexlet.code.app.utils.UserUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +19,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserUtils userUtils;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserUtils userUtils) {
         this.userService = userService;
+        this.userUtils = userUtils;
     }
 
     @GetMapping
@@ -38,21 +42,30 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserCreateDTO userCreateDTO) {
         UserDTO createdUser = userService.createUser(userCreateDTO);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(createdUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @RequestMapping(value = "/{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
             @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+
+        User currentUser = userUtils.getCurrentUser();
+        if (currentUser == null || !currentUser.getId().equals(id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         UserDTO updatedUser = userService.updateUser(id, userUpdateDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        User currentUser = userUtils.getCurrentUser();
+        if (currentUser == null || !currentUser.getId().equals(id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

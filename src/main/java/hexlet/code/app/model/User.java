@@ -29,7 +29,7 @@ public class User implements BaseEntity, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Size(max = 50)
     @Column(nullable = true)
