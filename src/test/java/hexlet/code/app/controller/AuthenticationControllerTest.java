@@ -84,8 +84,6 @@ class AuthenticationControllerTest {
     @Test
     void testAccessLoginWithoutAuth() {
         ResponseEntity<String> response = restTemplate.getForEntity("/api/login", String.class);
-        // Обычно GET /api/login не используется, но если есть, должен быть доступен всем
-        // Если нет такого эндпоинта, можно проверить POST отдельно
         assertThat(response.getStatusCode().is2xxSuccessful() || response.getStatusCode().is4xxClientError())
                 .isTrue();
     }
@@ -98,7 +96,6 @@ class AuthenticationControllerTest {
 
     @Test
     void testAccessForbiddenForWrongUser() {
-        // Создаём двух пользователей
         User user1 = new User();
         user1.setEmail("user1@example.com");
         user1.setPassword(passwordEncoder.encode("password1"));
@@ -109,7 +106,6 @@ class AuthenticationControllerTest {
         user2.setPassword(passwordEncoder.encode("password2"));
         userRepository.save(user2);
 
-        // Логинимся под user1 и получаем токен
         AuthRequest authRequest = new AuthRequest("user1@example.com", "password1");
 
         HttpHeaders headers = new HttpHeaders();
@@ -127,12 +123,10 @@ class AuthenticationControllerTest {
         String token = loginResponse.getBody();
         assertThat(token).isNotBlank();
 
-        // Пытаемся удалить или отредактировать user2 используя токен user1 (имитируем Forbidden)
         HttpHeaders headersWithAuth = new HttpHeaders();
         headersWithAuth.setBearerAuth(token);
         HttpEntity<Void> requestWithAuth = new HttpEntity<>(headersWithAuth);
 
-        // Здесь нужно указать реальный эндпоинт редактирования или удаления пользователя с id user2.getId()
         String url = "/api/users/" + user2.getId();
 
         ResponseEntity<String> forbiddenResponse = restTemplate.exchange(
