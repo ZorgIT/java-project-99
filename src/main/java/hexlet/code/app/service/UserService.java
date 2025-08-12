@@ -3,6 +3,7 @@ package hexlet.code.app.service;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
+import hexlet.code.app.exception.EmailAlreadyExistsException;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.User;
@@ -46,12 +47,14 @@ public class UserService {
 
     public UserDTO createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
-            throw new ResourceNotFoundException("Email already exists: " + userCreateDTO.getEmail());
+            throw new EmailAlreadyExistsException("Email already exists: "
+                    + userCreateDTO.getEmail());
         }
-
         User user = userMapper.map(userCreateDTO);
         user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
         User savedUser = userRepository.save(user);
+        System.out.println("Checking email: " + userCreateDTO.getEmail());
+        System.out.println("Exists? " + userRepository.existsByEmail(userCreateDTO.getEmail()));
         return userMapper.map(savedUser);
     }
 
@@ -62,7 +65,7 @@ public class UserService {
         if (userUpdateDTO.getEmail() != null &&
                 !existingUser.getEmail().equals(userUpdateDTO.getEmail()) &&
                 userRepository.existsByEmail(userUpdateDTO.getEmail())) {
-            throw new ResourceNotFoundException("Email already exists: " + userUpdateDTO.getEmail());
+            throw new EmailAlreadyExistsException("Email already exists: " + userUpdateDTO.getEmail());
         }
 
         userMapper.update(userUpdateDTO, existingUser);
