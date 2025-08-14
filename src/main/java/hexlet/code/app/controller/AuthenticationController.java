@@ -22,11 +22,11 @@ public class AuthenticationController {
     @PostMapping("")
     public String create(@RequestBody AuthRequest authRequest) {
         var authentication = new UsernamePasswordAuthenticationToken(
-                authRequest.getEmail(), authRequest.getPassword());
+                authRequest.getUsername(), authRequest.getPassword());
 
         authenticationManager.authenticate(authentication);
 
-        var token = jwtUtils.generateToken(authRequest.getEmail());
+        var token = jwtUtils.generateToken(authRequest.getUsername());
         return token;
     }
 
