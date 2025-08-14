@@ -2,6 +2,8 @@ package hexlet.code.app.component;
 
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.mapper.UserMapper;
+import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.utils.RandomUsers;
 import lombok.AllArgsConstructor;
@@ -27,6 +29,8 @@ public class DataInitializer implements ApplicationRunner {
 
     @Autowired
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private TaskStatusRepository taskStatusRepository;
 
 
     @Override
@@ -41,5 +45,11 @@ public class DataInitializer implements ApplicationRunner {
 
         var randomUsers = RandomUsers.generateFakeUsers(5);
         userRepository.saveAll(randomUsers);
+
+        taskStatusRepository.save(TaskStatus.of("draft"));
+        taskStatusRepository.save(TaskStatus.of("to review"));
+        taskStatusRepository.save(TaskStatus.of("to be fixed"));
+        taskStatusRepository.save(TaskStatus.of("to publish"));
+        taskStatusRepository.save(TaskStatus.of("published"));
     }
 }

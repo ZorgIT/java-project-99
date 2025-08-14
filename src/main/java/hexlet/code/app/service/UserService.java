@@ -53,8 +53,6 @@ public class UserService {
         User user = userMapper.map(userCreateDTO);
         user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
         User savedUser = userRepository.save(user);
-        System.out.println("Checking email: " + userCreateDTO.getEmail());
-        System.out.println("Exists? " + userRepository.existsByEmail(userCreateDTO.getEmail()));
         return userMapper.map(savedUser);
     }
 

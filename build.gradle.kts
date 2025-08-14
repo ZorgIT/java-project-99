@@ -44,6 +44,7 @@ dependencies {
     implementation ("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.apache.commons:commons-text:1.10.0")
 
 
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
