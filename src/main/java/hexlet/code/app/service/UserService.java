@@ -84,4 +84,8 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    public long getTotalCount() {
+        return userRepository.count();
+    }
 }

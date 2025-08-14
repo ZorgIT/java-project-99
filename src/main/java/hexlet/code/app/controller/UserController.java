@@ -30,7 +30,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        long totalCount = userService.getTotalCount();
+        return ResponseEntity.ok()
+                .header("X-Total-COunt", String.valueOf(totalCount))
+                .body(users);
     }
 
     @GetMapping("/{id}")
