@@ -34,8 +34,7 @@ public class TaskStatus implements BaseEntity {
     @NotBlank
     @Column(nullable = false)
     private String name;
-
-    @Setter(AccessLevel.NONE)
+    
     @Size(min = 1)
     @Column(updatable = false, nullable = false, unique = true)
     private String slug;

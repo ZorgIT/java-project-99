@@ -1,6 +1,9 @@
 package hexlet.code.app.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.context.annotation.Bean;
@@ -11,14 +14,16 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class JacksonConfig {
-    @Bean
-    Jackson2ObjectMapperBuilder objectMapperBuilder() {
-        var builder = new Jackson2ObjectMapperBuilder();
-        builder.serializationInclusion(JsonInclude.Include.NON_NULL)
-                .modulesToInstall(new JsonNullableModule());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        builder.serializers(new LocalDateSerializer(formatter));
 
-        return builder;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        JavaTimeModule module = new JavaTimeModule();
+        module.addSerializer(java.time.LocalDate.class, new LocalDateSerializer(DATE_FORMATTER));
+        mapper.registerModule(module);
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
     }
 }

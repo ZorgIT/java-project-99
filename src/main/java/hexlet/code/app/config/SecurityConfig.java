@@ -32,14 +32,36 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/assets/**").permitAll()
-                        .requestMatchers( "/api/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers("/api/users/**").authenticated()
+                        .requestMatchers(
+                                "/favicon.ico",
+                                "/error",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .requestMatchers("/",
+                                "/index.html",
+                                "/assets/**")
+                        .permitAll()
+                        .requestMatchers("" +
+                                "/api/login")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/users")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/task_statuses/**")
+                        .authenticated()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/task_statuses").authenticated()
+                        .requestMatchers(
+                                "/api/users/**",
+                                "/api/task_statuses")
+                        .authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(rs -> rs.jwt(jwt -> jwt.decoder(jwtDecoder)))
-                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 

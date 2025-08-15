@@ -5,7 +5,6 @@ import hexlet.code.app.dto.TaskStatusCreateDTO;
 import hexlet.code.app.dto.TaskStatusDTO;
 import hexlet.code.app.dto.TaskStatusUpdateDTO;
 import hexlet.code.app.service.TaskStatusService;
-import hexlet.code.app.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +16,10 @@ import java.util.List;
 @RequestMapping("/api/task_statuses")
 public class TaskStatusController {
     private final TaskStatusService taskStatusService;
-    private final UserService userService;
 
     @Autowired
-    public TaskStatusController(TaskStatusService taskStatusService, UserService userService) {
+    public TaskStatusController(TaskStatusService taskStatusService) {
         this.taskStatusService = taskStatusService;
-        this.userService = userService;
     }
 
     @GetMapping
@@ -34,8 +31,8 @@ public class TaskStatusController {
                 .body(taskStatuses);
     }
 
-    @GetMapping("/id")
-    public ResponseEntity<TaskStatusDTO> getTaskStatusById(@RequestParam("id") long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskStatusDTO> getTaskStatusById(@PathVariable("id") long id) {
         TaskStatusDTO taskStatusDTO = taskStatusService.getTaskStatusById(id);
         return taskStatusDTO != null ? ResponseEntity.ok(taskStatusDTO) : ResponseEntity.notFound().build();
     }
@@ -56,11 +53,11 @@ public class TaskStatusController {
         return ResponseEntity.ok(updatedTaskStatus);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTaskStatus(@PathVariable Long id) {
         //TODO добавить валидацию прав на удаление либо отрегулировать
         // политику в секьютири конфиге
-        userService.deleteUser(id);
+        taskStatusService.deleteTaskStatus(id);
         return ResponseEntity.noContent().build();
     }
 

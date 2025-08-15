@@ -32,7 +32,7 @@ public class UserController {
         List<UserDTO> users = userService.getAllUsers();
         long totalCount = userService.getTotalCount();
         return ResponseEntity.ok()
-                .header("X-Total-COunt", String.valueOf(totalCount))
+                .header("X-Total-Count", String.valueOf(totalCount))
                 .body(users);
     }
 
