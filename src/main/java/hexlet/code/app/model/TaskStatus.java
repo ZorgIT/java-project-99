@@ -34,9 +34,9 @@ public class TaskStatus implements BaseEntity {
     @NotBlank
     @Column(nullable = false)
     private String name;
-    
+
     @Size(min = 1)
-    @Column(updatable = false, nullable = false, unique = true)
+    @Column(nullable = false, unique = true) // убрали updatable = false
     private String slug;
 
     @CreationTimestamp
@@ -49,11 +49,6 @@ public class TaskStatus implements BaseEntity {
         return status;
     }
 
-    public void setName(String name) {
-        this.name = name;
-        this.slug = generateSlug(name);
-    }
-
     private String generateSlug(String name) {
         String slug = CaseUtils.toCamelCase(name, false, '-')
                 .toLowerCase()
@@ -64,5 +59,4 @@ public class TaskStatus implements BaseEntity {
         }
         return slug;
     }
-
 }

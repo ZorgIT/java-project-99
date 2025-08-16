@@ -20,6 +20,5 @@ public interface TaskStatusMapper {
     TaskStatus map(TaskStatusDTO dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "slug", ignore = true)
     void update(TaskStatusUpdateDTO dto, @MappingTarget TaskStatus model);
 }

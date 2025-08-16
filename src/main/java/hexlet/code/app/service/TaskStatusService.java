@@ -56,27 +56,21 @@ public class TaskStatusService {
         return taskStatusMapper.map(taskStatusSaved);
     }
 
-    public TaskStatusDTO updateTaskStatus(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
-        var existingTaskStatus = taskStatusRepository.findById(id)
+    public TaskStatusDTO updateTaskStatus(Long id, TaskStatusUpdateDTO dto) {
+        TaskStatus existing = taskStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task status not found with id: " + id));
 
-        if (taskStatusUpdateDTO.getName() != null &&
-                !existingTaskStatus.getName().equals(taskStatusUpdateDTO.getName()) &&
-                taskStatusRepository.existsByName(taskStatusUpdateDTO.getName())) {
-            throw new TaskStatusAlreadyExistsException("Task status already exists: " + taskStatusUpdateDTO.getName());
+        if (dto.getName() != null && !existing.getName().equals(dto.getName())
+                && taskStatusRepository.existsByName(dto.getName())) {
+            throw new TaskStatusAlreadyExistsException("Task status already exists: " + dto.getName());
         }
 
-        // 🔧 обновляем поля
-        if (taskStatusUpdateDTO.getName() != null) {
-            existingTaskStatus.setName(taskStatusUpdateDTO.getName());
-        }
-        if (taskStatusUpdateDTO.getSlug() != null) {
-            existingTaskStatus.setSlug(taskStatusUpdateDTO.getSlug());
-        }
+        taskStatusMapper.update(dto, existing);
 
-        TaskStatus updatedTaskStatus = taskStatusRepository.save(existingTaskStatus);
-        return taskStatusMapper.map(updatedTaskStatus);
+        TaskStatus updated = taskStatusRepository.save(existing);
+        return taskStatusMapper.map(updated);
     }
+
 
     public void deleteTaskStatus(Long id) {
         if (!taskStatusRepository.existsById(id)) {
