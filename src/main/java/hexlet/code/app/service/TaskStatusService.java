@@ -38,7 +38,7 @@ public class TaskStatusService {
     }
 
 
-    public List<TaskStatusDTO> getAllTaskStatus() {
+    public List<TaskStatusDTO> getAllTaskStatuses() {
         log.info("GET /api/task_statuses request received");
         return taskStatusRepository.findAll()
                 .stream()

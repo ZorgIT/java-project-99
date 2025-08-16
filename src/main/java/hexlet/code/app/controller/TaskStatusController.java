@@ -24,7 +24,8 @@ public class TaskStatusController {
 
     @GetMapping
     public ResponseEntity<List<TaskStatusDTO>> getAllTaskStatuses() {
-        List<TaskStatusDTO> taskStatuses = taskStatusService.getAllTaskStatus();
+        List<TaskStatusDTO> taskStatuses =
+                taskStatusService.getAllTaskStatuses();
         long totalCount = taskStatuses.size();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(totalCount))
@@ -34,14 +35,13 @@ public class TaskStatusController {
     @GetMapping("/{id}")
     public ResponseEntity<TaskStatusDTO> getTaskStatusById(@PathVariable("id") long id) {
         TaskStatusDTO taskStatusDTO = taskStatusService.getTaskStatusById(id);
-        return taskStatusDTO != null ? ResponseEntity.ok(taskStatusDTO) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(taskStatusDTO);
     }
 
     @PostMapping
     public ResponseEntity<TaskStatusDTO> createTaskStatus(@RequestBody @Valid TaskStatusCreateDTO taskStatusCreateDTO) {
-        TaskStatusDTO createdTaskStatus =
-                taskStatusService.createTaskStatus(taskStatusCreateDTO);
-        return createdTaskStatus != null ? ResponseEntity.ok(createdTaskStatus) : ResponseEntity.notFound().build();
+        TaskStatusDTO createdTaskStatus = taskStatusService.createTaskStatus(taskStatusCreateDTO);
+        return ResponseEntity.ok(createdTaskStatus);
     }
 
     @RequestMapping(value = "/{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
