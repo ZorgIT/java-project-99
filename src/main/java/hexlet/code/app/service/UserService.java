@@ -4,10 +4,12 @@ import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.exception.EmailAlreadyExistsException;
+import hexlet.code.app.exception.ForbiddenException;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.utils.UserUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,14 +24,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserUtils userUtils;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder, UserUtils userUtils) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.userUtils = userUtils;
     }
 
     public UserDTO getUserById(Long id) {
@@ -62,7 +66,7 @@ public class UserService {
 
         if (userUpdateDTO.getEmail() != null &&
                 !existingUser.getEmail().equals(userUpdateDTO.getEmail()) &&
-                userRepository.existsByEmail(userUpdateDTO.getEmail())) {
+                userRepository.existsByEmailAndIdNot(userUpdateDTO.getEmail(), id)) {
             throw new EmailAlreadyExistsException("Email already exists: " + userUpdateDTO.getEmail());
         }
 
@@ -77,11 +81,22 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        User currentUser =
+                userRepository.findByEmail(userUtils.getCurrentUser().getEmail())
+                        .orElseThrow(() -> new ResourceNotFoundException("Current user not found: "
+                                + userUtils.getCurrentUser().getEmail()));
+
+        if (!currentUser.getId().equals(id)) {
+            throw new ForbiddenException("You can delete only yourself");
+        }
+
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id: " + id);
         }
+
         userRepository.deleteById(id);
     }
+
 
     public long getTotalCount() {
         return userRepository.count();

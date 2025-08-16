@@ -3,6 +3,7 @@ package hexlet.code.app.utils;
 import hexlet.code.app.model.User;
 import net.datafaker.Faker;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +19,8 @@ public class RandomUsers {
             user.setLastName(faker.name().lastName());
             user.setEmail(faker.internet().emailAddress());
             user.setPassword(faker.internet().password(8, 16));
-            user.setCreatedAt(LocalDateTime.now());
-            user.setUpdatedAt(LocalDateTime.now());
+            user.setCreatedAt(LocalDate.now());
+            user.setUpdatedAt(LocalDate.now());
             users.add(user);
 
         }

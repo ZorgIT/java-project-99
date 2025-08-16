@@ -54,6 +54,7 @@ public class UserController {
             @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
 
         User currentUser = userUtils.getCurrentUser();
+        //TODO заменить на роли
         if (currentUser == null || !currentUser.getId().equals(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -65,6 +66,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         User currentUser = userUtils.getCurrentUser();
+        //TODO заменить на роли
         if (currentUser == null || !currentUser.getId().equals(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
