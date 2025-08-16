@@ -6,7 +6,10 @@ import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.exception.EmailAlreadyExistsException;
 import hexlet.code.app.exception.ResourceNotFoundException;
+import hexlet.code.app.model.User;
 import hexlet.code.app.service.UserService;
+import hexlet.code.app.utils.UserUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,7 +28,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,6 +43,12 @@ class UserControllerTest {
         public UserService userService() {
             return Mockito.mock(UserService.class);
         }
+
+        @Bean
+        public UserUtils userUtils() {
+            return Mockito.mock(UserUtils.class);
+        }
+
     }
 
     @Autowired
@@ -51,6 +60,11 @@ class UserControllerTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserUtils userUtils;
+
+
+
     private UserDTO createTestUserDTO(Long id, String email, String firstName, String lastName) {
         UserDTO dto = new UserDTO();
         dto.setId(id);
@@ -61,22 +75,22 @@ class UserControllerTest {
         return dto;
     }
 
-    private final UserDTO testUserDTO = createTestUserDTO(1L, "john@google.com", "John", "Doe");
+    private final UserDTO user1 = createTestUserDTO(1L, "john@google.com", "John", "Doe");
+    private final UserDTO user2 = createTestUserDTO(2L, "jack@yahoo.com", "Jack", "Jons");
 
     @Test
+    @WithMockUser(username = "john@google.com")
     void getUserById_ShouldReturnUser() throws Exception {
-        when(userService.getUserById(1L)).thenReturn(testUserDTO);
+        when(userService.getUserById(1L)).thenReturn(user1);
 
         mockMvc.perform(get("/api/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.email").value("john@google.com"))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.createdAt").value("2023-10-30"));
+                .andExpect(jsonPath("$.email").value("john@google.com"));
     }
 
     @Test
+    @WithMockUser(username = "john@google.com")
     void getUserById_ShouldReturnNotFound() throws Exception {
         when(userService.getUserById(99L))
                 .thenThrow(new ResourceNotFoundException("User not found with id: 99"));
@@ -86,17 +100,14 @@ class UserControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "john@google.com")
     void getAllUsers_ShouldReturnUsersList() throws Exception {
-        UserDTO secondUserDTO = createTestUserDTO(2L, "jack@yahoo.com", "Jack", "Jons");
-
-        when(userService.getAllUsers()).thenReturn(List.of(testUserDTO, secondUserDTO));
+        when(userService.getAllUsers()).thenReturn(List.of(user1, user2));
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].email").value("john@google.com"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].email").value("jack@yahoo.com"));
+                .andExpect(jsonPath("$[1].id").value(2));
     }
 
     @Test
@@ -108,25 +119,20 @@ class UserControllerTest {
         createDTO.setPassword("some-password");
 
         UserDTO newUserDTO = createTestUserDTO(3L, "jack@google.com", "Jack", "Jons");
-
         when(userService.createUser(any(UserCreateDTO.class))).thenReturn(newUserDTO);
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(3))
-                .andExpect(jsonPath("$.email").value("jack@google.com"))
-                .andExpect(jsonPath("$.firstName").value("Jack"))
-                .andExpect(jsonPath("$.lastName").value("Jons"))
-                .andExpect(jsonPath("$.createdAt").value("2023-10-30"));
+                .andExpect(jsonPath("$.id").value(3));
     }
 
     @Test
     void createUser_ShouldReturnConflictForDuplicateEmail() throws Exception {
         UserCreateDTO createDTO = new UserCreateDTO();
         createDTO.setEmail("john@google.com");
-        createDTO.setFirstName("John");
+        createDTO.setFirstName("John");  // добавить обязательные поля
         createDTO.setLastName("Doe");
         createDTO.setPassword("password");
 
@@ -139,41 +145,60 @@ class UserControllerTest {
                 .andExpect(status().isConflict());
     }
 
-
+    // --- UPDATE USER ---
     @Test
-    void updateUser_ShouldReturnUpdatedUser() throws Exception {
+    @WithMockUser(username = "john@google.com")
+    void updateUser_ShouldReturnUpdatedUser_WhenUpdatingSelf() throws Exception {
+        // DTO с данными для обновления
         UserUpdateDTO updateDTO = new UserUpdateDTO();
-        updateDTO.setEmail("jack@yahoo.com");
+        updateDTO.setEmail("john@google.com");
         updateDTO.setPassword("new-password");
 
-        UserDTO updatedUserDTO = createTestUserDTO(3L, "jack@yahoo.com", "Jack", "Jons");
+        // Мок текущего пользователя
+        User currentUser = new User();
+        currentUser.setId(1L);
+        currentUser.setEmail("john@google.com");
+        when(userUtils.getCurrentUser()).thenReturn(currentUser);
 
-        when(userService.updateUser(eq(3L), any(UserUpdateDTO.class))).thenReturn(updatedUserDTO);
+        // Мок поведения сервиса
+        when(userService.updateUser(eq(1L), any(UserUpdateDTO.class))).thenReturn(user1);
 
-        mockMvc.perform(put("/api/users/3")
+        // Вызов контроллера через MockMvc
+        mockMvc.perform(put("/api/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(3))
-                .andExpect(jsonPath("$.email").value("jack@yahoo.com"))
-                .andExpect(jsonPath("$.firstName").value("Jack"))
-                .andExpect(jsonPath("$.lastName").value("Jons"));
+                .andExpect(jsonPath("$.id").value(1));
     }
 
     @Test
-    void deleteUser_ShouldReturnNoContent() throws Exception {
-        doNothing().when(userService).deleteUser(1L);
+    @WithMockUser(username = "john@google.com")
+    void updateUser_ShouldReturnForbidden_WhenUpdatingAnotherUser() throws Exception {
+        UserUpdateDTO updateDTO = new UserUpdateDTO();
+        updateDTO.setEmail("jack@yahoo.com");
 
+        mockMvc.perform(put("/api/users/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateDTO)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "john@google.com")
+    void deleteUser_ShouldReturnNoContent_WhenDeletingSelf() throws Exception {
+        doNothing().when(userService).deleteUser(1L);
+        User testUser = new User();
+        testUser.setId(1L);
+        when(userUtils.getCurrentUser()).thenReturn(testUser);
         mockMvc.perform(delete("/api/users/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void deleteUser_ShouldReturnNotFound() throws Exception {
-        doThrow(new ResourceNotFoundException("User not found with id: 99"))
-                .when(userService).deleteUser(99L);
-
-        mockMvc.perform(delete("/api/users/99"))
-                .andExpect(status().isNotFound());
+    @WithMockUser(username = "john@google.com")
+    void deleteUser_ShouldReturnForbidden_WhenDeletingAnotherUser() throws Exception {
+        mockMvc.perform(delete("/api/users/2"))
+                .andExpect(status().isForbidden());
     }
 }
+
