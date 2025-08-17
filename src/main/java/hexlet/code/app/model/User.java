@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -55,6 +56,19 @@ public class User implements BaseEntity, UserDetails {
 
     @UpdateTimestamp
     private LocalDate updatedAt;
+
+    @OneToMany(mappedBy = "assignee", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Task> tasks = new ArrayList<>();
+
+    public void addTask(Task task) {
+        tasks.add(task);
+        task.setAssignee(this);
+    }
+
+    public void removeTask(Task task) {
+        tasks.remove(task);
+        task.setAssignee(null);
+    }
 
     @Override
     public String getPassword() {

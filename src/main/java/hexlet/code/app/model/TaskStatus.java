@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "task_statuses", indexes = @Index(name = "idx_task_status_slug", columnList = "slug"))
@@ -18,13 +20,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TaskStatus implements BaseEntity {
-
-    @PrePersist
-    public void prePersist() {
-        if (this.slug == null && this.name != null) {
-            this.slug = generateSlug(this.name);
-        }
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +31,23 @@ public class TaskStatus implements BaseEntity {
     private String name;
 
     @Size(min = 1)
-    @Column(nullable = false, unique = true) // убрали updatable = false
+    @Column(nullable = false, unique = true)
     private String slug;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    // Один статус может быть у многих задач
+    @OneToMany(mappedBy = "status")
+    private List<Task> tasks = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        if (this.slug == null && this.name != null) {
+            this.slug = generateSlug(this.name);
+        }
+    }
 
     public static TaskStatus of(String name) {
         TaskStatus status = new TaskStatus();
