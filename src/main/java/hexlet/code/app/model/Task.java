@@ -42,7 +42,7 @@ public class Task implements BaseEntity {
 
     // ! Много задач может быть назначено одному пользователю
     @ManyToOne
-    @JoinColumn(name = "assignee_id", nullable = false)
+    @JoinColumn(name = "assignee_id", nullable = true)
     private User assignee;
 
     @CreationTimestamp

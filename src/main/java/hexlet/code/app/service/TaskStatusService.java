@@ -3,7 +3,6 @@ package hexlet.code.app.service;
 import hexlet.code.app.dto.TaskStatusCreateDTO;
 import hexlet.code.app.dto.TaskStatusDTO;
 import hexlet.code.app.dto.TaskStatusUpdateDTO;
-import hexlet.code.app.exception.EmailAlreadyExistsException;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.exception.TaskStatusAlreadyExistsException;
 import hexlet.code.app.mapper.TaskStatusMapper;
@@ -30,6 +29,7 @@ public class TaskStatusService {
         this.taskStatusMapper = taskStatusMapper;
     }
 
+    @Transactional(readOnly = true)
     public TaskStatusDTO getTaskStatusById(Long id) {
         TaskStatus taskStatus = taskStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task status"
@@ -38,6 +38,7 @@ public class TaskStatusService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<TaskStatusDTO> getAllTaskStatuses() {
         log.info("GET /api/task_statuses request received");
         return taskStatusRepository.findAll()
@@ -73,9 +74,8 @@ public class TaskStatusService {
 
 
     public void deleteTaskStatus(Long id) {
-        if (!taskStatusRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Task status not found with id: " + id);
-        }
+        taskStatusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task status not found with id: " + id));
         taskStatusRepository.deleteById(id);
     }
 

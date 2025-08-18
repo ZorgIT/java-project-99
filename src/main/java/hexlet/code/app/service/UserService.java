@@ -10,7 +10,7 @@ import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.utils.UserUtils;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,12 +36,14 @@ public class UserService {
         this.userUtils = userUtils;
     }
 
+    @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         return userMapper.map(user);
     }
 
+    @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -81,20 +83,14 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        User currentUser =
-                userRepository.findByEmail(userUtils.getCurrentUser().getEmail())
-                        .orElseThrow(() -> new ResourceNotFoundException("Current user not found: "
-                                + userUtils.getCurrentUser().getEmail()));
-
+        User currentUser = userUtils.getCurrentUser();
         if (!currentUser.getId().equals(id)) {
             throw new ForbiddenException("You can delete only yourself");
         }
 
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("User not found with id: " + id);
-        }
-
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        userRepository.delete(user);
     }
 
 

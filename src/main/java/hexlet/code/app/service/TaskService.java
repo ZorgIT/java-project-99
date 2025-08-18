@@ -4,13 +4,14 @@ import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.exception.ResourceNotFoundException;
-import hexlet.code.app.exception.TaskStatusAlreadyExistsException;
 import hexlet.code.app.mapper.TaskMapper;
 import hexlet.code.app.model.Task;
+import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.model.User;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +37,14 @@ public class TaskService {
         this.taskStatusRepository = taskStatusRepository;
     }
 
+    @Transactional(readOnly = true)
     public TaskDTO getTaskById(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not "
-                        + "found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
         return taskMapper.map(task);
     }
 
+    @Transactional(readOnly = true)
     public List<TaskDTO> getAllTask() {
         return taskRepository.findAll()
                 .stream()
@@ -51,48 +53,46 @@ public class TaskService {
     }
 
     public TaskDTO createTask(TaskCreateDTO dto) {
-        //TODO вывести проверки в отдельный модуль
-        if (!userRepository.existsById(dto.getAssignee().getId())) {
-            throw new ResourceNotFoundException("User not found with id: "
-                    + dto.getAssignee().getId());
-        }
-        if (!taskStatusRepository.existsById(dto.getStatus().getId())) {
-            throw new ResourceNotFoundException("Task status not found with " +
-                    "id: "
-                    + dto.getAssignee().getId());
-        }
         Task task = taskMapper.map(dto);
+        task.setStatus(getTaskStatus(dto.getStatusId()));
+
+        if (dto.getAssigneeId() != null) {
+            task.setAssignee(getAssignee(dto.getAssigneeId()));
+        }
+
         return taskMapper.map(taskRepository.save(task));
     }
 
     public TaskDTO updateTask(Long id, TaskUpdateDTO dto) {
-        Task existingTask = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: "
-                        + id));
-        if (!userRepository.existsById(dto.getAssignee().getId())) {
-            throw new ResourceNotFoundException("User not found with id: "
-                    + dto.getAssignee().getId());
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+
+        taskMapper.update(dto, task);
+
+        if (dto.getStatusId() != null) {
+            task.setStatus(getTaskStatus(dto.getStatusId()));
         }
-        if (!taskStatusRepository.existsById(dto.getStatus().getId())) {
-            throw new ResourceNotFoundException("Task status not found with " +
-                    "id: "
-                    + dto.getAssignee().getId());
+        if (dto.getAssigneeId() != null) {
+            task.setAssignee(getAssignee(dto.getAssigneeId()));
         }
 
-        taskMapper.update(dto, existingTask);
-        Task updatedTask = taskRepository.save(existingTask);
-
-        return taskMapper.map(updatedTask);
+        return taskMapper.map(taskRepository.save(task));
     }
 
     public void deleteTask(Long id) {
-        if (!taskRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Task not found with id: "
-                    + id);
-        }
-
-        taskRepository.deleteById(id);
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+        taskRepository.delete(task);
     }
 
+    private TaskStatus getTaskStatus(Long id) {
+        return taskStatusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task status not found with id: " + id));
+    }
 
+    private User getAssignee(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    }
 }
+

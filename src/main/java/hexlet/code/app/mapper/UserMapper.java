@@ -8,21 +8,24 @@ import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
 @Mapper(
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface UserMapper {
 
     UserDTO map(User model);
 
-
+    @Mapping(target = "tasks", ignore = true) // tasks есть только в entity
     User map(UserCreateDTO dto);
 
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "tasks", ignore = true)
     User map(UserDTO dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "tasks", ignore = true)
     void update(UserUpdateDTO dto, @MappingTarget User model);
 }
+
