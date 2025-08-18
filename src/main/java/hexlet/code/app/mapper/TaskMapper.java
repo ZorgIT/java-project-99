@@ -12,20 +12,22 @@ import org.mapstruct.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface TaskMapper {
-    @Mapping(source = "status.id", target = "statusId")
+
+    @Mapping(source = "name", target = "title")
+    @Mapping(source = "description", target = "content")
+    @Mapping(source = "status.name", target = "status")
     @Mapping(source = "assignee.id", target = "assigneeId")
     TaskDTO map(Task model);
-
-    Task map(TaskDTO dto);
 
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "assignee", ignore = true)
     Task map(TaskCreateDTO dto);
 
+    // Обновление существующей задачи
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "status", ignore = true)   // обновляем вручную в сервисе
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "assignee", ignore = true)
-        // обновляем вручную в сервисе
+    @Mapping(source = "title", target = "name")
+    @Mapping(source = "content", target = "description")
     void update(TaskUpdateDTO dto, @MappingTarget Task model);
-
 }

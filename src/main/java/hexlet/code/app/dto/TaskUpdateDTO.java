@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TaskUpdateDTO {
-    private String name;
+    private String title;
     private Integer index;
-    private String description;
+    private String content;
     private Long statusId;
     private Long assigneeId;
 }

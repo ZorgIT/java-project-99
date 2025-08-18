@@ -69,6 +69,7 @@ public class DataInitializer implements ApplicationRunner {
         task2.setName("task2");
         task2.setDescription("task description");
         task2.setStatusId(4L);
+        task2.setIndex(10);
 
         taskService.createTask(task2);
     }

@@ -23,7 +23,7 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllTask() {
-        List<TaskDTO> tasks = taskService.getAllTask();
+        List<TaskDTO> tasks = taskService.getAllTasks();
         long totalCount = tasks.size();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(totalCount))

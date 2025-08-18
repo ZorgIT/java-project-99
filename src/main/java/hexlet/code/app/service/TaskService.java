@@ -45,7 +45,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public List<TaskDTO> getAllTask() {
+    public List<TaskDTO> getAllTasks() {
         return taskRepository.findAll()
                 .stream()
                 .map(taskMapper::map)
@@ -56,9 +56,7 @@ public class TaskService {
         Task task = taskMapper.map(dto);
         task.setStatus(getTaskStatus(dto.getStatusId()));
 
-        if (dto.getAssigneeId() != null) {
-            task.setAssignee(getAssignee(dto.getAssigneeId()));
-        }
+        applyStatusAndAssignee(task, dto.getStatusId(), dto.getAssigneeId());
 
         return taskMapper.map(taskRepository.save(task));
     }
@@ -72,9 +70,8 @@ public class TaskService {
         if (dto.getStatusId() != null) {
             task.setStatus(getTaskStatus(dto.getStatusId()));
         }
-        if (dto.getAssigneeId() != null) {
-            task.setAssignee(getAssignee(dto.getAssigneeId()));
-        }
+
+        applyStatusAndAssignee(task, dto.getStatusId(), dto.getAssigneeId());
 
         return taskMapper.map(taskRepository.save(task));
     }
@@ -94,5 +91,15 @@ public class TaskService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
+
+    private void applyStatusAndAssignee(Task task, Long statusId, Long assigneeId) {
+        if (statusId != null) {
+            task.setStatus(getTaskStatus(statusId));
+        }
+        if (assigneeId != null) {
+            task.setAssignee(getAssignee(assigneeId));
+        }
+    }
+
 }
 
