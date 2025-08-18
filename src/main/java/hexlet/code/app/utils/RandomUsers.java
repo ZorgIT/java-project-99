@@ -4,7 +4,6 @@ import hexlet.code.app.model.User;
 import net.datafaker.Faker;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

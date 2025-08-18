@@ -5,7 +5,6 @@ import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.model.User;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,

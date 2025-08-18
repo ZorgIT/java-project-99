@@ -4,9 +4,7 @@ import hexlet.code.app.dto.LabelCreateDTO;
 import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.mapper.UserMapper;
-import hexlet.code.app.model.Label;
 import hexlet.code.app.model.TaskStatus;
-import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
@@ -33,13 +31,10 @@ public class DataInitializer implements ApplicationRunner {
     @Autowired
     private final UserMapper userMapper;
 
-
     @Autowired
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private TaskStatusRepository taskStatusRepository;
-    @Autowired
-    private TaskRepository taskRepository;
     @Autowired
     private TaskService taskService;
     @Autowired
