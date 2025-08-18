@@ -2,6 +2,7 @@ package hexlet.code.app.handler;
 
 import hexlet.code.app.exception.EmailAlreadyExistsException;
 import hexlet.code.app.exception.ResourceNotFoundException;
+import hexlet.code.app.exception.TaskAlreadyExistsException;
 import hexlet.code.app.exception.TaskStatusAlreadyExistsException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(TaskStatusAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleTaskStatusAlreadyExists(TaskStatusAlreadyExistsException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(TaskAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleTaskAlreadyExists(TaskStatusAlreadyExistsException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 }
