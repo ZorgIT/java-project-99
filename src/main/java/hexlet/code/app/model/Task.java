@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "assignees")
@@ -39,11 +40,18 @@ public class Task implements BaseEntity {
     @JoinColumn(name = "status_id", nullable = false)
     private TaskStatus status;
 
-
     // ! Много задач может быть назначено одному пользователю
     @ManyToOne
     @JoinColumn(name = "assignee_id", nullable = true)
     private User assignee;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "task_labels",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id")
+    )
+    private Set<Label> labels;
 
     @CreationTimestamp
     @Column(updatable = false)

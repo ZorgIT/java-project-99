@@ -1,12 +1,16 @@
 package hexlet.code.app.component;
 
+import hexlet.code.app.dto.LabelCreateDTO;
 import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.mapper.UserMapper;
+import hexlet.code.app.model.Label;
 import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.service.LabelService;
 import hexlet.code.app.service.TaskService;
 import hexlet.code.app.utils.RandomUsers;
 import lombok.AllArgsConstructor;
@@ -38,6 +42,8 @@ public class DataInitializer implements ApplicationRunner {
     private TaskRepository taskRepository;
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private LabelService labelService;
 
 
     @Override
@@ -59,6 +65,20 @@ public class DataInitializer implements ApplicationRunner {
         var toPublishStatus = taskStatusRepository.save(TaskStatus.of("to publish"));
         var publishedStatus = taskStatusRepository.save(TaskStatus.of("published"));
 
+        var label1 = new LabelCreateDTO();
+        label1.setName("Bug");
+
+        var label2 = new LabelCreateDTO();
+        label2.setName("Feature");
+
+        var label3 = new LabelCreateDTO();
+        label3.setName("Improvement");
+
+        labelService.createLabel(label1);
+        labelService.createLabel(label2);
+        labelService.createLabel(label3);
+
+
         var task1 = new TaskCreateDTO();
         task1.setName("task1");
         task1.setDescription("task description");
@@ -70,7 +90,6 @@ public class DataInitializer implements ApplicationRunner {
         task2.setDescription("task description");
         task2.setStatusId(4L);
         task2.setIndex(10);
-
         taskService.createTask(task2);
     }
 }

@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -88,7 +88,7 @@ class TaskStatusControllerTest {
         dto.setId(id);
         dto.setName(name);
         dto.setSlug(slug);
-        dto.setCreatedAt(LocalDateTime.of(2023, 10, 30, 0, 0));
+        dto.setCreatedAt(LocalDate.of(2023, 10, 30));
         return dto;
     }
 
