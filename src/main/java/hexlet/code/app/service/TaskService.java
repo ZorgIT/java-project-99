@@ -1,5 +1,6 @@
 package hexlet.code.app.service;
 
+import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.exception.ResourceNotFoundException;
@@ -49,12 +50,8 @@ public class TaskService {
                 .toList();
     }
 
-    public TaskDTO createTask(TaskDTO dto) {
+    public TaskDTO createTask(TaskCreateDTO dto) {
         //TODO вывести проверки в отдельный модуль
-        if (taskRepository.existsById(dto.getId())) {
-            throw new TaskStatusAlreadyExistsException("Task already exists"
-                    + " with id: " + dto.getId());
-        }
         if (!userRepository.existsById(dto.getAssignee().getId())) {
             throw new ResourceNotFoundException("User not found with id: "
                     + dto.getAssignee().getId());
