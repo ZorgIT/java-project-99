@@ -90,6 +90,11 @@ public class UserService {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        if (!user.getTasks().isEmpty()) {
+            throw new ForbiddenException("Cannot delete user assigned to tasks");
+        }
+
         userRepository.delete(user);
     }
 
