@@ -11,4 +11,5 @@ public class TaskCreateDTO {
     private String description;
     private Long statusId;
     private Long assigneeId;
+    private Long labelId;
 }

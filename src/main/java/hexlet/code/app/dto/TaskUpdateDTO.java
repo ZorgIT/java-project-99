@@ -11,4 +11,5 @@ public class TaskUpdateDTO {
     private String content;
     private Long statusId;
     private Long assigneeId;
+    private Long labelId;
 }
