@@ -32,9 +32,13 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/",
+                        .requestMatchers(
+                                "/",
                                 "/index.html",
-                                "/assets/**")
+                                "/assets/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**")
                         .permitAll()
                         .requestMatchers("" +
                                 "/api/login")
