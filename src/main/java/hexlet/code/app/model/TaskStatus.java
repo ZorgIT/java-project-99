@@ -1,5 +1,6 @@
 package hexlet.code.app.model;
 
+import hexlet.code.app.utils.SlugUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -45,9 +46,11 @@ public class TaskStatus implements BaseEntity {
     @PrePersist
     public void prePersist() {
         if (this.slug == null && this.name != null) {
-            this.slug = generateSlug(this.name);
+            this.slug = SlugUtils.generateSlug(this.name);
         }
     }
+
+
 
     public static TaskStatus of(String name) {
         TaskStatus status = new TaskStatus();
@@ -55,14 +58,5 @@ public class TaskStatus implements BaseEntity {
         return status;
     }
 
-    private String generateSlug(String name) {
-        String slug = CaseUtils.toCamelCase(name, false, '-')
-                .toLowerCase()
-                .replaceAll("[^a-z0-9-]", "");
 
-        if (slug.isBlank()) {
-            throw new IllegalArgumentException("Cannot generate slug from name: " + name);
-        }
-        return slug;
-    }
 }

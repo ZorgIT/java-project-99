@@ -14,7 +14,6 @@ import org.mapstruct.*;
 )
 public interface TaskStatusMapper {
 
-
     TaskStatusDTO map(TaskStatus model);
 
     @Mapping(target = "tasks", ignore = true)
@@ -23,7 +22,7 @@ public interface TaskStatusMapper {
     @Mapping(target = "tasks", ignore = true)
     TaskStatus map(TaskStatusDTO dto);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "tasks", ignore = true)
+    @Mapping(target = "id", ignore = true)
     void update(TaskStatusUpdateDTO dto, @MappingTarget TaskStatus model);
 }

@@ -30,7 +30,8 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/h2-console/**"//Убрать перед продом
                         ).permitAll()
                         .requestMatchers(
                                 "/",

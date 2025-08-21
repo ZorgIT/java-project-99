@@ -22,8 +22,20 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAllTask() {
-        List<TaskDTO> tasks = taskService.getAllTasks();
+    public ResponseEntity<List<TaskDTO>> getAllTasks(
+            @RequestParam(required = false) String titleCont,
+            @RequestParam(required = false) Long assigneeId,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long labelId
+    ) {
+        List<TaskDTO> tasks;
+
+        if (titleCont != null || assigneeId != null || status != null || labelId != null) {
+            tasks = taskService.getTasks(titleCont, assigneeId, status, labelId);
+        } else {
+            tasks = taskService.getAllTasks();
+        }
+
         long totalCount = tasks.size();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(totalCount))
@@ -57,4 +69,6 @@ public class TaskController {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

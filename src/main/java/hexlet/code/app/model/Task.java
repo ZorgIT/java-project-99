@@ -49,7 +49,7 @@ public class Task implements BaseEntity {
     @JoinTable(
             name = "task_labels",
             joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "label_id")
+            inverseJoinColumns = @JoinColumn(name = "label_id",nullable = false)
     )
     private Set<Label> labels;
 

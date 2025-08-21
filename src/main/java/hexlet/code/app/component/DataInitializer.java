@@ -5,7 +5,6 @@ import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.TaskStatus;
-import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.service.LabelService;
@@ -74,16 +73,16 @@ public class DataInitializer implements ApplicationRunner {
         labelService.createLabel(label3);
 
 
-        var task1 = new TaskCreateDTO();
-        task1.setName("task1");
-        task1.setDescription("task description");
-        task1.setStatusId(2L);
+        TaskCreateDTO task1 = new TaskCreateDTO();
+        task1.setTitle("task1");
+        task1.setContent("task description");
+        task1.setStatus(draftStatus.getSlug()); // <-- статус
         taskService.createTask(task1);
 
-        var task2 = new TaskCreateDTO();
-        task2.setName("task2");
-        task2.setDescription("task description");
-        task2.setStatusId(4L);
+        TaskCreateDTO task2 = new TaskCreateDTO();
+        task2.setTitle("task2");
+        task2.setContent("task description");
+        task2.setStatus(toReviewStatus.getSlug()); // <-- статус
         task2.setIndex(10);
         taskService.createTask(task2);
     }

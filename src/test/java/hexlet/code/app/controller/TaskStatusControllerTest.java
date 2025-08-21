@@ -5,6 +5,7 @@ import hexlet.code.app.dto.TaskStatusCreateDTO;
 import hexlet.code.app.dto.TaskStatusDTO;
 import hexlet.code.app.dto.TaskStatusUpdateDTO;
 import hexlet.code.app.dto.UserCreateDTO;
+import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.service.TaskStatusService;
@@ -24,8 +25,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -170,24 +170,4 @@ class TaskStatusControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    /* TODO implement tests
-    @Test
-    void getTaskStatusById_ShouldReturnNotFound() throws Exception {
-        when(taskStatusService.getTaskStatusById(99L))
-                .thenThrow(new ResourceNotFoundException("Task status not found with id: 99"));
-
-        mockMvc.perform(get("/api/task_statuses/99")
-                        .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    void deleteTaskStatus_ShouldReturnNotFound() throws Exception {
-        doThrow(new ResourceNotFoundException("Task status not found with id: 99"))
-                .when(taskStatusService).deleteTaskStatus(99L);
-
-        mockMvc.perform(delete("/api/task_statuses/99")
-                        .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
-                .andExpect(status().isNotFound());
-    }*/
 }

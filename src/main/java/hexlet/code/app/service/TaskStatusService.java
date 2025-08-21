@@ -8,8 +8,10 @@ import hexlet.code.app.exception.TaskStatusAlreadyExistsException;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.TaskStatusRepository;
+import hexlet.code.app.utils.SlugUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,9 +63,17 @@ public class TaskStatusService {
         TaskStatus existing = taskStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task status not found with id: " + id));
 
-        if (dto.getName() != null && !existing.getName().equals(dto.getName())
+        if (dto.getName() != null && !dto.getName().equals(existing.getName())
                 && taskStatusRepository.existsByName(dto.getName())) {
             throw new TaskStatusAlreadyExistsException("Task status already exists: " + dto.getName());
+        }
+
+        if (dto.getSlug() != null) {
+            if (!dto.getSlug().equals(existing.getSlug()) && taskStatusRepository.existsBySlug(dto.getSlug())) {
+                throw new TaskStatusAlreadyExistsException("Task status slug already exists: " + dto.getSlug());
+            }
+        } else if (dto.getName() != null) {
+            existing.setSlug(SlugUtils.generateSlug(dto.getName()));
         }
 
         taskStatusMapper.update(dto, existing);

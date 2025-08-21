@@ -13,21 +13,23 @@ import org.mapstruct.*;
 )
 public interface TaskMapper {
 
-    @Mapping(source = "name", target = "title")
-    @Mapping(source = "description", target = "content")
     @Mapping(source = "status.name", target = "status")
     @Mapping(source = "assignee.id", target = "assigneeId")
+    @Mapping(source = "name", target = "title")
     TaskDTO map(Task model);
 
-    @Mapping(target = "status", ignore = true)
-    @Mapping(target = "assignee", ignore = true)
-    Task map(TaskCreateDTO dto);
-
-    // Обновление существующей задачи
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "status", ignore = true)
-    @Mapping(target = "assignee", ignore = true)
     @Mapping(source = "title", target = "name")
     @Mapping(source = "content", target = "description")
-    void update(TaskUpdateDTO dto, @MappingTarget Task model);
+    @Mapping(target = "status", ignore = true)   // обработать вручную
+    @Mapping(target = "assignee", ignore = true) // обработать вручную
+    @Mapping(target = "labels", ignore = true)   // обработать вручную
+    Task map(TaskCreateDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "title", target = "name")
+    @Mapping(source = "content", target = "description")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "assignee", ignore = true)
+    @Mapping(target = "labels", ignore = true)
+    void update(TaskUpdateDTO dto, @MappingTarget Task task);
 }
