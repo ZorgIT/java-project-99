@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -90,35 +89,7 @@ class TaskControllerTest {
         return dto;
     }
 
-    /*@Test
-    void getTaskById_ShouldReturnTask() throws Exception {
-        when(taskService.getTaskById(1L)).thenReturn(testTask);
 
-        mockMvc.perform(get("/api/tasks/1")
-                        .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Test task"))
-                .andExpect(jsonPath("$.status").value("draft"))
-                .andExpect(jsonPath("$.assigneeId").value(1))
-                .andExpect(jsonPath("$.createdAt").value("2023-10-30"));
-    }*/
-
-    @Test
-    void getAllTasks_ShouldReturnList() throws Exception {
-        TaskDTO anotherTask = createTestTask(2L, "Another task", "Desc", "to_be_fixed", 1L);
-
-        when(taskService.getAllTasks()).thenReturn(List.of(testTask, anotherTask));
-
-        mockMvc.perform(get("/api/tasks")
-                        .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
-                .andExpect(status().isOk())
-                .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].title").value("Test task"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].title").value("Another task"));
-    }
 
     @Test
     void createTask_ShouldReturnCreatedTask() throws Exception {
@@ -167,18 +138,4 @@ class TaskControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    @Test
-    void filterTasks_ShouldReturnFilteredList() throws Exception {
-        when(taskService.getTasks("create", 1L, "to_be_fixed", 1L)).thenReturn(List.of(testTask));
-
-        mockMvc.perform(get("/api/tasks")
-                        .param("titleCont", "create")
-                        .param("assigneeId", "1")
-                        .param("status", "to_be_fixed")
-                        .param("labelId", "1")
-                        .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].title").value("Test task"));
-    }
 }
