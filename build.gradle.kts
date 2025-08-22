@@ -1,3 +1,9 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     java
     application
@@ -6,6 +12,7 @@ plugins {
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
     id("io.freefair.lombok") version "8.6"
+    id("io.sentry.jvm.gradle") version "5.9.0"
 }
 
 group = "hexlet.code"
@@ -35,19 +42,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("net.datafaker:datafaker:2.0.2")
     implementation("org.instancio:instancio-junit:3.3.1")
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    implementation ("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.apache.commons:commons-text:1.10.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.9")
-
 
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
@@ -68,8 +72,37 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
 
+    org = "zorgit-t0"
+    projectName = "java-spring-boot"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
+
+// Конфигурация Checkstyle
+checkstyle {
+    toolVersion = "10.12.5"
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+}
+
+// Конфигурация Jacoco
+jacoco {
+    toolVersion = "0.8.11"
+}
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }
