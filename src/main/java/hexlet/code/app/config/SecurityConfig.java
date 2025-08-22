@@ -30,7 +30,7 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/webjars/**",
-                                "/h2-console/**"//Убрать перед продом
+                                "/api/error"
                         ).permitAll()
                         .requestMatchers(
                                 "/",
