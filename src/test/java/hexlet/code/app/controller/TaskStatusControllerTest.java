@@ -5,7 +5,6 @@ import hexlet.code.app.dto.TaskStatusCreateDTO;
 import hexlet.code.app.dto.TaskStatusDTO;
 import hexlet.code.app.dto.TaskStatusUpdateDTO;
 import hexlet.code.app.dto.UserCreateDTO;
-import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.service.TaskStatusService;
@@ -25,9 +24,14 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class TaskStatusControllerTest {
 
@@ -93,7 +97,7 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    void getTaskStatusById_ShouldReturnStatus() throws Exception {
+    void getTaskStatusByIdShouldReturnStatus() throws Exception {
         when(taskStatusService.getTaskStatusById(1L)).thenReturn(draftStatus);
 
         mockMvc.perform(get("/api/task_statuses/1")
@@ -107,7 +111,7 @@ class TaskStatusControllerTest {
 
 
     @Test
-    void getAllTaskStatuses_ShouldReturnList() throws Exception {
+    void getAllTaskStatusesShouldReturnList() throws Exception {
         TaskStatusDTO reviewStatus = createTestStatus(2L, "ToReview", "to_review");
 
         when(taskStatusService.getAllTaskStatuses()).thenReturn(List.of(draftStatus, reviewStatus));
@@ -122,7 +126,7 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    void createTaskStatus_ShouldReturnCreatedStatus() throws Exception {
+    void createTaskStatusShouldReturnCreatedStatus() throws Exception {
         TaskStatusCreateDTO createDTO = new TaskStatusCreateDTO();
         createDTO.setName("New");
         createDTO.setSlug("new");
@@ -143,7 +147,7 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    void updateTaskStatus_ShouldReturnUpdatedStatus() throws Exception {
+    void updateTaskStatusShouldReturnUpdatedStatus() throws Exception {
         TaskStatusUpdateDTO updateDTO = new TaskStatusUpdateDTO();
         updateDTO.setName("UpdatedStatus");
 
@@ -154,7 +158,7 @@ class TaskStatusControllerTest {
         mockMvc.perform(put("/api/task_statuses/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO))
-                .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
+                        .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("UpdatedStatus"))
@@ -162,12 +166,11 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    void deleteTaskStatus_ShouldReturnNoContent() throws Exception {
+    void deleteTaskStatusShouldReturnNoContent() throws Exception {
         doNothing().when(taskStatusService).deleteTaskStatus(1L);
 
         mockMvc.perform(delete("/api/task_statuses/1")
                         .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
                 .andExpect(status().isNoContent());
     }
-
 }

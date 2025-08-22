@@ -28,8 +28,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -63,7 +67,6 @@ class UserControllerTest {
     private UserUtils userUtils;
 
 
-
     private UserDTO createTestUserDTO(Long id, String email, String firstName, String lastName) {
         UserDTO dto = new UserDTO();
         dto.setId(id);
@@ -79,7 +82,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "john@google.com")
-    void getUserById_ShouldReturnUser() throws Exception {
+    void getUserByIdShouldReturnUser() throws Exception {
         when(userService.getUserById(1L)).thenReturn(user1);
 
         mockMvc.perform(get("/api/users/1"))
@@ -90,7 +93,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "john@google.com")
-    void getUserById_ShouldReturnNotFound() throws Exception {
+    void getUserByIdShouldReturnNotFound() throws Exception {
         when(userService.getUserById(99L))
                 .thenThrow(new ResourceNotFoundException("User not found with id: 99"));
 
@@ -100,7 +103,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "john@google.com")
-    void getAllUsers_ShouldReturnUsersList() throws Exception {
+    void getAllUsersShouldReturnUsersList() throws Exception {
         when(userService.getAllUsers()).thenReturn(List.of(user1, user2));
 
         mockMvc.perform(get("/api/users"))
@@ -110,7 +113,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_ShouldReturnCreatedUser() throws Exception {
+    void createUserShouldReturnCreatedUser() throws Exception {
         UserCreateDTO createDTO = new UserCreateDTO();
         createDTO.setEmail("jack@google.com");
         createDTO.setFirstName("Jack");
@@ -128,7 +131,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_ShouldReturnConflictForDuplicateEmail() throws Exception {
+    void createUserShouldReturnConflictForDuplicateEmail() throws Exception {
         UserCreateDTO createDTO = new UserCreateDTO();
         createDTO.setEmail("john@google.com");
         createDTO.setFirstName("John");  // добавить обязательные поля
@@ -147,7 +150,7 @@ class UserControllerTest {
     // --- UPDATE USER ---
     @Test
     @WithMockUser(username = "john@google.com")
-    void updateUser_ShouldReturnUpdatedUser_WhenUpdatingSelf() throws Exception {
+    void updateUserShouldReturnUpdatedUserWhenUpdatingSelf() throws Exception {
         // DTO с данными для обновления
         UserUpdateDTO updateDTO = new UserUpdateDTO();
         updateDTO.setEmail("john@google.com");
@@ -172,7 +175,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "john@google.com")
-    void updateUser_ShouldReturnForbidden_WhenUpdatingAnotherUser() throws Exception {
+    void updateUserShouldReturnForbiddenWhenUpdatingAnotherUser() throws Exception {
         UserUpdateDTO updateDTO = new UserUpdateDTO();
         updateDTO.setEmail("jack@yahoo.com");
 
@@ -184,7 +187,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "john@google.com")
-    void deleteUser_ShouldReturnNoContent_WhenDeletingSelf() throws Exception {
+    void deleteUserShouldReturnNoContentWhenDeletingSelf() throws Exception {
         doNothing().when(userService).deleteUser(1L);
         User testUser = new User();
         testUser.setId(1L);
@@ -195,9 +198,8 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "john@google.com")
-    void deleteUser_ShouldReturnForbidden_WhenDeletingAnotherUser() throws Exception {
+    void deleteUserShouldReturnForbiddenWhenDeletingAnotherUser() throws Exception {
         mockMvc.perform(delete("/api/users/2"))
                 .andExpect(status().isForbidden());
     }
 }
-

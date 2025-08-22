@@ -23,9 +23,13 @@ import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class TaskControllerTest {
 
@@ -92,7 +96,7 @@ class TaskControllerTest {
 
 
     @Test
-    void createTask_ShouldReturnCreatedTask() throws Exception {
+    void createTaskShouldReturnCreatedTask() throws Exception {
         TaskCreateDTO createDTO = new TaskCreateDTO();
         createDTO.setTitle("New task");
         createDTO.setContent("New description");
@@ -112,7 +116,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void updateTask_ShouldReturnUpdatedTask() throws Exception {
+    void updateTaskShouldReturnUpdatedTask() throws Exception {
         TaskUpdateDTO updateDTO = new TaskUpdateDTO();
         updateDTO.setTitle("Updated title");
 
@@ -130,7 +134,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void deleteTask_ShouldReturnNoContent() throws Exception {
+    void deleteTaskShouldReturnNoContent() throws Exception {
         doNothing().when(taskService).deleteTask(1L);
 
         mockMvc.perform(delete("/api/tasks/1")

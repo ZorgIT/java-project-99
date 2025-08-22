@@ -22,8 +22,12 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -71,7 +75,7 @@ class LabelControllerTest {
 
     @Test
     @WithMockUser
-    void getAllLabels_ShouldReturnList() throws Exception {
+    void getAllLabelsShouldReturnList() throws Exception {
         when(labelService.getAllLabels()).thenReturn(List.of(label1, label2));
 
         mockMvc.perform(get("/api/labels"))
@@ -84,7 +88,7 @@ class LabelControllerTest {
 
     @Test
     @WithMockUser
-    void getLabelById_ShouldReturnLabel() throws Exception {
+    void getLabelByIdShouldReturnLabel() throws Exception {
         when(labelService.getLabelById(1L)).thenReturn(label1);
 
         mockMvc.perform(get("/api/labels/1"))
@@ -95,7 +99,7 @@ class LabelControllerTest {
 
     @Test
     @WithMockUser
-    void createLabel_ShouldReturnCreatedLabel() throws Exception {
+    void createLabelShouldReturnCreatedLabel() throws Exception {
         LabelCreateDTO createDTO = createLabelCreateDTO("Feature");
         LabelDTO createdLabel = createLabelDTO(3L, "Feature");
         when(labelService.createLabel(any(LabelCreateDTO.class))).thenReturn(createdLabel);
@@ -110,7 +114,7 @@ class LabelControllerTest {
 
     @Test
     @WithMockUser
-    void updateLabel_ShouldReturnUpdatedLabel() throws Exception {
+    void updateLabelShouldReturnUpdatedLabel() throws Exception {
         LabelUpdateDTO updateDTO = createLabelUpdateDTO("Critical");
         LabelDTO updatedLabel = createLabelDTO(1L, "Critical");
         when(labelService.updateLabel(any(Long.class), any(LabelUpdateDTO.class))).thenReturn(updatedLabel);
@@ -125,7 +129,7 @@ class LabelControllerTest {
 
     @Test
     @WithMockUser
-    void deleteLabel_ShouldReturnNoContent() throws Exception {
+    void deleteLabelShouldReturnNoContent() throws Exception {
         doNothing().when(labelService).deleteLabel(1L);
 
         mockMvc.perform(delete("/api/labels/1"))
