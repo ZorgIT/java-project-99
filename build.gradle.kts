@@ -105,6 +105,21 @@ tasks.withType<Test> {
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+
+    // Основные исходники
+    val mainSrc = files("src/main/java")
+
+    // Только существующие сгенерированные файлы
+    val generatedSrc = files("build/generated/sources/annotationProcessor/java/main").filter { it.exists() }
+
+    additionalSourceDirs.setFrom(mainSrc + generatedSrc)
+    sourceDirectories.setFrom(mainSrc + generatedSrc)
+    classDirectories.setFrom(
+        fileTree(layout.buildDirectory.dir("classes/java/main").get()) {
+            exclude("hexlet/code/app/mapper/*Impl.class")
+        }
+    )
+
     reports {
         xml.required = true
         html.required = true
