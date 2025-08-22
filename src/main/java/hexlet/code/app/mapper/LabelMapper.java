@@ -5,7 +5,12 @@ import hexlet.code.app.dto.LabelCreateDTO;
 import hexlet.code.app.dto.LabelUpdateDTO;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.Set;
 import java.util.stream.Collectors;

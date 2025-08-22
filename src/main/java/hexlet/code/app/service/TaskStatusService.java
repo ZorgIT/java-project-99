@@ -11,7 +11,6 @@ import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.utils.SlugUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +50,8 @@ public class TaskStatusService {
 
     public TaskStatusDTO createTaskStatus(@Valid TaskStatusCreateDTO taskStatusCreateDTO) {
         if (taskStatusRepository.existsByName(taskStatusCreateDTO.getName())) {
-            throw new TaskStatusAlreadyExistsException("Task status already " +
-                    "exists: " + taskStatusCreateDTO.getName());
+            throw new TaskStatusAlreadyExistsException("Task status already "
+                    + "exists: " + taskStatusCreateDTO.getName());
         }
         var taskStatus = taskStatusMapper.map(taskStatusCreateDTO);
         var taskStatusSaved = taskStatusRepository.save(taskStatus);
@@ -70,7 +69,8 @@ public class TaskStatusService {
 
         if (dto.getSlug() != null) {
             if (!dto.getSlug().equals(existing.getSlug()) && taskStatusRepository.existsBySlug(dto.getSlug())) {
-                throw new TaskStatusAlreadyExistsException("Task status slug already exists: " + dto.getSlug());
+                throw new TaskStatusAlreadyExistsException("Task status slug already exists: "
+                        + dto.getSlug());
             }
         } else if (dto.getName() != null) {
             existing.setSlug(SlugUtils.generateSlug(dto.getName()));
@@ -85,7 +85,8 @@ public class TaskStatusService {
 
     public void deleteTaskStatus(Long id) {
         taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Task status not found with id: "
+                        + id));
         taskStatusRepository.deleteById(id);
     }
 

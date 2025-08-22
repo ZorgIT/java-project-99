@@ -1,6 +1,5 @@
 package hexlet.code.app.config;
 
-import hexlet.code.app.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +40,7 @@ public class SecurityConfig {
                                 "/v3/api-docs",
                                 "/v3/api-docs/**")
                         .permitAll()
-                        .requestMatchers("" +
+                        .requestMatchers(
                                 "/api/login")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST,

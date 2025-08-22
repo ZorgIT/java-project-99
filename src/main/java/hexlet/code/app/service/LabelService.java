@@ -53,8 +53,8 @@ public class LabelService {
         Label label = labelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Label not found with id: " + id));
 
-        if (!label.getName().equals(labelUpdateDTO.getName()) &&
-                labelRepository.existsByName(labelUpdateDTO.getName())) {
+        if (!label.getName().equals(labelUpdateDTO.getName())
+                && labelRepository.existsByName(labelUpdateDTO.getName())) {
             throw new IllegalArgumentException("Label with this name already exists");
         }
 

@@ -2,7 +2,6 @@ package hexlet.code.app.service;
 
 import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskDTO;
-import hexlet.code.app.dto.TaskStatusDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.TaskMapper;
@@ -51,7 +50,8 @@ public class TaskService {
     @Transactional(readOnly = true)
     public TaskDTO getTaskById(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: "
+                        + id));
         return taskMapper.map(task);
     }
 
@@ -77,8 +77,7 @@ public class TaskService {
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
         taskMapper.update(dto, existing);
-        applyStatusAndAssignee(existing, dto.getStatus(), dto.getAssigneeId()
-                , dto.getLabelsId());
+        applyStatusAndAssignee(existing, dto.getStatus(), dto.getAssigneeId(), dto.getLabelsId());
 
         var updated = taskRepository.save(existing);
         return taskMapper.map(updated);

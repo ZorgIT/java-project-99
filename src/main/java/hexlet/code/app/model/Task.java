@@ -1,6 +1,17 @@
 package hexlet.code.app.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Id;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -49,7 +60,8 @@ public class Task implements BaseEntity {
     @JoinTable(
             name = "task_labels",
             joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "label_id",nullable = false)
+            inverseJoinColumns = @JoinColumn(name = "label_id", nullable =
+                    false)
     )
     private Set<Label> labels;
 

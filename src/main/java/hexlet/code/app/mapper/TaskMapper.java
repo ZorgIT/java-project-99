@@ -4,7 +4,15 @@ import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.model.Task;
-import org.mapstruct.*;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.MappingTarget;
+
 
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -22,7 +30,8 @@ public interface TaskMapper {
     @Mapping(source = "content", target = "description")
     @Mapping(target = "status", ignore = true)   // обработать вручную
     @Mapping(target = "assignee", ignore = true) // обработать вручную
-    @Mapping(target = "labels", ignore = true)   // обработать вручную
+    @Mapping(target = "labels", ignore = true)
+        // обработать вручную
     Task map(TaskCreateDTO dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

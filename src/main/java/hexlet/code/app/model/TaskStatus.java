@@ -1,11 +1,23 @@
 package hexlet.code.app.model;
 
 import hexlet.code.app.utils.SlugUtils;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.apache.commons.text.CaseUtils;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -50,13 +62,10 @@ public class TaskStatus implements BaseEntity {
         }
     }
 
-
-
     public static TaskStatus of(String name) {
         TaskStatus status = new TaskStatus();
         status.setName(name);
         return status;
     }
-
 
 }

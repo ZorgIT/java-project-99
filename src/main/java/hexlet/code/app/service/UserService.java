@@ -39,7 +39,8 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: "
+                        + id));
         return userMapper.map(user);
     }
 
@@ -64,11 +65,12 @@ public class UserService {
 
     public UserDTO updateUser(Long id, UserUpdateDTO userUpdateDTO) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: "
+                        + id));
 
-        if (userUpdateDTO.getEmail() != null &&
-                !existingUser.getEmail().equals(userUpdateDTO.getEmail()) &&
-                userRepository.existsByEmailAndIdNot(userUpdateDTO.getEmail(), id)) {
+        if (userUpdateDTO.getEmail() != null
+                && !existingUser.getEmail().equals(userUpdateDTO.getEmail())
+                && userRepository.existsByEmailAndIdNot(userUpdateDTO.getEmail(), id)) {
             throw new EmailAlreadyExistsException("Email already exists: " + userUpdateDTO.getEmail());
         }
 

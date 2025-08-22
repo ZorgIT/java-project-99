@@ -83,6 +83,10 @@ sentry {
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
+tasks.test {
+    jvmArgs("-javaagent:${classpath.find { it.name.contains("byte-buddy-agent") }?.absolutePath}")
+}
+
 // Конфигурация Checkstyle
 checkstyle {
     toolVersion = "10.12.5"

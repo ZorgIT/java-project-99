@@ -4,7 +4,13 @@ import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.model.User;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
@@ -15,7 +21,8 @@ public interface UserMapper {
 
     UserDTO map(User model);
 
-    @Mapping(target = "tasks", ignore = true) // tasks есть только в entity
+    @Mapping(target = "tasks", ignore = true)
+        // tasks есть только в entity
     User map(UserCreateDTO dto);
 
     @Mapping(target = "password", ignore = true)

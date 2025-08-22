@@ -20,10 +20,10 @@ public class TaskSpecifications {
     }
 
     public static Specification<Task> hasLabel(Long labelId) {
-        // тут зависит от того, как устроены метки
-        // допустим, связь ManyToMany
         return (root, query, cb) -> {
-            if (labelId == null) return null;
+            if (labelId == null) {
+                return null;
+            }
             return cb.equal(root.join("labels").get("id"), labelId);
         };
     }

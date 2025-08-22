@@ -1,6 +1,10 @@
 package hexlet.code.app.handler;
 
-import hexlet.code.app.exception.*;
+import hexlet.code.app.exception.ResourceNotFoundException;
+import hexlet.code.app.exception.EmailAlreadyExistsException;
+import hexlet.code.app.exception.TaskStatusAlreadyExistsException;
+import hexlet.code.app.exception.TaskAlreadyExistsException;
+import hexlet.code.app.exception.BadRequestException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
