@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,10 +43,18 @@ public class LabelService {
     }
 
     public LabelDTO createLabel(LabelCreateDTO labelCreateDTO) {
-        if (labelRepository.existsByName(labelCreateDTO.getName())) {
-            throw new IllegalArgumentException("Label with this name already exists");
+        String name = labelCreateDTO.getName() != null ? labelCreateDTO.getName().trim() : "";
+        if (name.isEmpty() || name.length() < 3 || name.length() > 1000) {
+            throw new IllegalArgumentException("Label name must be between 3 and 1000 characters and not blank");
         }
+        if (labelRepository.existsByName(name)) {
+            throw new IllegalArgumentException("Label with name '" + name + "' already exists");
+        }
+        labelCreateDTO.setName(name); // Update DTO with sanitized name
         Label label = labelMapper.map(labelCreateDTO);
+        if (label.getCreatedAt() == null) {
+            label.setCreatedAt(LocalDate.now());
+        }
         return labelMapper.map(labelRepository.save(label));
     }
 

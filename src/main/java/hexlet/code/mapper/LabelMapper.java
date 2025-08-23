@@ -11,6 +11,8 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Mapping;
+
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ public interface LabelMapper {
 
     LabelDTO map(Label label);
 
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDate.now())")
     Label map(LabelCreateDTO dto);
 
     default Set<Long> mapTasksToIds(Set<Task> tasks) {

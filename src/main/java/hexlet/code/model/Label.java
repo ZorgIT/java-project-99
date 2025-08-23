@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.NotBlank;
 
 
 import java.time.LocalDate;
@@ -35,7 +34,6 @@ public class Label implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Size(min = 3, max = 1000)
     @Column(nullable = false, unique = true)
     private String name;
