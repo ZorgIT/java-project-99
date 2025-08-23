@@ -139,7 +139,7 @@ class TaskStatusControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDTO))
                         .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(3))
                 .andExpect(jsonPath("$.name").value("New"))
                 .andExpect(jsonPath("$.slug").value("new"))

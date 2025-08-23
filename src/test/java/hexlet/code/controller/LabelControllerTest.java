@@ -107,7 +107,7 @@ class LabelControllerTest {
         mockMvc.perform(post("/api/labels")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDTO)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(3))
                 .andExpect(jsonPath("$.name").value("Feature"));
     }

@@ -109,7 +109,7 @@ class TaskControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDTO))
                         .header("Authorization", "Basic " + "hexlet@example.com:qwerty"))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(3))
                 .andExpect(jsonPath("$.title").value("New task"))
                 .andExpect(jsonPath("$.status").value("draft"));
