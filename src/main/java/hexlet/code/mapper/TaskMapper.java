@@ -6,7 +6,14 @@ import hexlet.code.dto.TaskUpdateDTO;
 import hexlet.code.model.Task;
 import hexlet.code.model.Label;
 
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.BeanMapping;
 
 import java.util.stream.Collectors;
 
