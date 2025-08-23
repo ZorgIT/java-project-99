@@ -39,7 +39,6 @@ public class LabelController {
 
     @PostMapping
     public ResponseEntity<LabelDTO> createLabel(@RequestBody @Valid LabelCreateDTO labelCreateDTO) {
-        System.out.println(labelCreateDTO.getName());
         LabelDTO createdLabel = labelService.createLabel(labelCreateDTO);
         return ResponseEntity
                 .created(URI.create("/api/labels/" + createdLabel.getId()))
