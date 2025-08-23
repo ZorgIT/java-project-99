@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -48,7 +49,9 @@ public class TaskStatusController {
     @PostMapping
     public ResponseEntity<TaskStatusDTO> createTaskStatus(@RequestBody @Valid TaskStatusCreateDTO taskStatusCreateDTO) {
         TaskStatusDTO createdTaskStatus = taskStatusService.createTaskStatus(taskStatusCreateDTO);
-        return ResponseEntity.ok(createdTaskStatus);
+        return ResponseEntity
+                .created(URI.create("/api/task_statuses/" + createdTaskStatus.getId()))
+                .body(createdTaskStatus);
     }
 
     @RequestMapping(value = "/{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
