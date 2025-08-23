@@ -83,6 +83,12 @@ sentry {
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
+tasks.named("sentryBundleSourcesJava").configure {
+    onlyIf {
+        System.getenv("SENTRY_AUTH_TOKEN") != null
+    }
+}
+
 tasks.test {
     jvmArgs("-javaagent:${classpath.find { it.name.contains("byte-buddy-agent") }?.absolutePath}")
 }
