@@ -72,8 +72,6 @@ public class TaskStatusService {
                 throw new TaskStatusAlreadyExistsException("Task status slug already exists: "
                         + dto.getSlug());
             }
-        } else if (dto.getName() != null) {
-            existing.setSlug(SlugUtils.generateSlug(dto.getName()));
         }
 
         taskStatusMapper.update(dto, existing);
