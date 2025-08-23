@@ -38,6 +38,14 @@ public class TaskStatusService {
         return taskStatusMapper.map(taskStatus);
     }
 
+    @Transactional(readOnly = true)
+    public TaskStatus getTaskStatusEntityBySlug(String slug) {
+        return taskStatusRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Task status not found with slug: " + slug
+                ));
+    }
+
 
     @Transactional(readOnly = true)
     public List<TaskStatusDTO> getAllTaskStatuses() {

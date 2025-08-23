@@ -19,6 +19,7 @@ import org.mapstruct.MappingTarget;
 )
 public interface TaskStatusMapper {
 
+    @Mapping(source = "slug", target = "slug")  // <- добавить эту строку
     TaskStatusDTO map(TaskStatus model);
 
     @Mapping(target = "tasks", ignore = true)
