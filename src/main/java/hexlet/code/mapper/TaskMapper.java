@@ -4,14 +4,11 @@ import hexlet.code.dto.TaskCreateDTO;
 import hexlet.code.dto.TaskDTO;
 import hexlet.code.dto.TaskUpdateDTO;
 import hexlet.code.model.Task;
+import hexlet.code.model.Label;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
+
+import java.util.stream.Collectors;
 
 
 @Mapper(
@@ -21,10 +18,20 @@ import org.mapstruct.MappingTarget;
 )
 public interface TaskMapper {
 
-    @Mapping(source = "status.name", target = "status")
+    @Mapping(source = "status.slug", target = "status")
     @Mapping(source = "assignee.id", target = "assigneeId")
     @Mapping(source = "name", target = "title")
-    TaskDTO map(Task model);
+    @Mapping(source = "description", target = "content")
+    TaskDTO map(Task task);
+
+    @AfterMapping
+    default void setLabelsId(Task task, @MappingTarget TaskDTO dto) {
+        if (task.getLabels() != null) {
+            dto.setLabelsId(task.getLabels().stream()
+                    .map(Label::getId)
+                    .collect(Collectors.toSet()));
+        }
+    }
 
     @Mapping(source = "title", target = "name")
     @Mapping(source = "content", target = "description")

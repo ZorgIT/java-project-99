@@ -33,18 +33,21 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskStatusRepository taskStatusRepository;
     private final LabelRepository labelRepository;
+    private final TaskStatusService taskStatusService;
 
     @Autowired
     public TaskService(TaskRepository taskRepository,
                        TaskMapper taskMapper,
                        UserRepository userRepository,
                        TaskStatusRepository taskStatusRepository,
-                       LabelRepository labelRepository) {
+                       LabelRepository labelRepository,
+                       TaskStatusService taskStatusService) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.userRepository = userRepository;
         this.taskStatusRepository = taskStatusRepository;
         this.labelRepository = labelRepository;
+        this.taskStatusService = taskStatusService;
     }
 
     @Transactional(readOnly = true)
@@ -89,15 +92,15 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
-    private TaskStatus getTaskStatus(String name) {
+    private TaskStatus getTaskStatusByName(String name) {
         return taskStatusRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Task status not found with name: " + name));
     }
 
     private TaskStatus getTaskStatusBySlug(String slug) {
-        return taskStatusRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status not found with slug: " + slug));
+        return taskStatusService.getTaskStatusEntityBySlug(slug);
     }
+
 
     private User getAssignee(Long id) {
         return userRepository.findById(id)

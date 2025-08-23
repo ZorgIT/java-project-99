@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,7 +87,9 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(@RequestBody @Valid TaskCreateDTO dto) {
         TaskDTO createdTask = taskService.createTask(dto);
-        return ResponseEntity.ok(createdTask);
+        return ResponseEntity
+                .created(URI.create("/api/tasks/" + createdTask.getId()))
+                .body(createdTask);
     }
 
     @RequestMapping(value = "/{id}", method = {RequestMethod.PUT,
