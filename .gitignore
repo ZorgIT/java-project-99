@@ -71,3 +71,4 @@ dist-ssr
 *.sln
 *.sw?
 /src/main/resources/application-deptest.yml
+/src/test/java/project/
